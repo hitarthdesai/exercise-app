@@ -1,23 +1,19 @@
-//
-//  AuthenticationViewModel.swift
-//  exercise app
-//
-//  Created by Hitarth Jainul Desai on 2022-09-14.
-//
-
 import Foundation
+import FirebaseCore
+import FirebaseFirestore
 import FirebaseAuth
 
 struct User {
     var uid: String = ""
+    var isNewUser: Bool = false
 }
 
-class AuthenticationViewModel: ObservableObject {
+class LoginViewModel: ObservableObject {
     private var handler = Auth.auth().addStateDidChangeListener{_,_ in }
     init() {
-        handler = Auth.auth().addStateDidChangeListener{ auth,user in
+        handler = Auth.auth().addStateDidChangeListener{ auth, user in
             if let user = user {
-                self._currentUser = User(uid: user.uid)
+                self._currentUser = User(uid: user.uid, isNewUser: self.loginMethod == .signUp)
                 self.loginState = .loggedIn
             } else {
                 self._currentUser = nil
@@ -54,10 +50,13 @@ class AuthenticationViewModel: ObservableObject {
     @Published var password: String = ""
     
     enum LoginError {
-        case emptyEmail, invalidEmail, emailAlreadyExists
-        case emptyUsername, usernameAlreadyTaken
-        case emptyPassword, wrongPassword
-        case noError, someError
+        case emptyEmail, invalidEmail
+        case emptyUsername
+        case emptyPassword
+        case noError
+        
+        // Below given errors have not been handled yet
+        case cannotCreateUserDocument, someError, wrongPassword, usernameAlreadyTaken, emailAlreadyExists
     }
     @Published var error: LoginError = .noError
     
@@ -77,7 +76,7 @@ class AuthenticationViewModel: ObservableObject {
         }
         
         do{
-           try await Auth.auth().signIn(withEmail: email, password: password)
+            try await Auth.auth().signIn(withEmail: email, password: password)
         } catch let signInError as NSError {
             switch signInError.code {
             case AuthErrorCode.invalidEmail.rawValue:
@@ -90,6 +89,19 @@ class AuthenticationViewModel: ObservableObject {
                 self.error = .someError
             }
             
+        }
+    }
+    
+    private func createUserDocument(uid: String) {
+        let db = Firestore.firestore()
+        var _: DocumentReference = db.collection("users").addDocument(data: [
+            "userID": uid
+        ]) { error in
+            if let _ = error {
+                self.error = .cannotCreateUserDocument
+            } else {
+                self.error = .noError
+            }
         }
     }
     
@@ -108,7 +120,9 @@ class AuthenticationViewModel: ObservableObject {
         }
         
         do{
-           try await Auth.auth().createUser(withEmail: email, password: password)
+            let AuthData = try await Auth.auth().createUser(withEmail: email, password: password)
+            let loggedInUserID = AuthData.user.uid
+            createUserDocument(uid: loggedInUserID)
         } catch let signUpError as NSError {
             switch signUpError.code {
             case AuthErrorCode.invalidEmail.rawValue:
@@ -130,6 +144,4 @@ class AuthenticationViewModel: ObservableObject {
         } catch {
         }
     }
-    
-    
 }

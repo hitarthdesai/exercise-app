@@ -1,10 +1,10 @@
 import SwiftUI
 
 struct LoginView: View {
-    @ObservedObject var authenticationVM = AuthenticationViewModel()
+    @ObservedObject var loginVM = LoginViewModel()
 
     fileprivate func EmailInput() -> some View {
-        TextField("Email", text: $authenticationVM.email)
+        TextField("Email", text: $loginVM.email)
             .keyboardType(.emailAddress)
             .disableAutocorrection(true)
             .autocapitalization(.none)
@@ -12,7 +12,7 @@ struct LoginView: View {
     }
     
     fileprivate func UsernameInput() -> some View {
-        TextField("Username", text: $authenticationVM.password)
+        TextField("Username", text: $loginVM.password)
             .keyboardType(.default)
             .disableAutocorrection(true)
             .autocapitalization(.none)
@@ -20,14 +20,14 @@ struct LoginView: View {
     }
     
     fileprivate func PasswordInput() -> some View {
-        SecureField("Password", text: $authenticationVM.password)
+        SecureField("Password", text: $loginVM.password)
             .textFieldStyle(.roundedBorder)
     }
     
     fileprivate func SignInButton() -> some View {
         Button("Sign In") {
             Task {
-                await authenticationVM.signIn()
+                await loginVM.signIn()
             }
         }
         .buttonStyle(LoginButton())
@@ -36,7 +36,7 @@ struct LoginView: View {
     fileprivate func SignUpButton() -> some View {
         Button("Sign Up") {
             Task {
-                await authenticationVM.signIn()
+                await loginVM.signIn()
             }
         }
         .buttonStyle(LoginButton())
@@ -51,37 +51,38 @@ struct LoginView: View {
     
     var body: some View {
         VStack() {
-            Picker("Login Method", selection: $authenticationVM.loginMethod) {
-                Text("Sign In").tag(AuthenticationViewModel.LoginMethod.signIn)
-                Text("Sign Up").tag(AuthenticationViewModel.LoginMethod.signUp)
+            Picker("Login Method", selection: $loginVM.loginMethod) {
+                Text("Sign In").tag(LoginViewModel.LoginMethod.signIn)
+                Text("Sign Up").tag(LoginViewModel.LoginMethod.signUp)
             }
             .pickerStyle(.segmented)
             .padding(.bottom, 50)
             
             EmailInput()
-            if(authenticationVM.error == AuthenticationViewModel.LoginError.emptyEmail) {
+            if(loginVM.error == LoginViewModel.LoginError.emptyEmail) {
                 ErrorText(errorText: "Email cannot be empty")
-            } else if(authenticationVM.error == AuthenticationViewModel.LoginError.invalidEmail) {
+            } else if(loginVM.error == LoginViewModel.LoginError.invalidEmail) {
                 ErrorText(errorText: "Email is invalid")
             }
             
-            if (authenticationVM.loginMethod == AuthenticationViewModel.LoginMethod.signUp) {
+            if (loginVM.loginMethod == LoginViewModel.LoginMethod.signUp) {
                 UsernameInput()
             }
             
             PasswordInput()
-            if(authenticationVM.error == AuthenticationViewModel.LoginError.emptyPassword) {
+            if(loginVM.error == LoginViewModel.LoginError.emptyPassword) {
                 ErrorText(errorText: "Password cannot be empty")
             }
-            if(authenticationVM.error == AuthenticationViewModel.LoginError.wrongPassword) {
+            if(loginVM.error == LoginViewModel.LoginError.wrongPassword) {
                 ErrorText(errorText: "Password is incorrect")
             }
             
-            if authenticationVM.loginMethod == AuthenticationViewModel.LoginMethod.signUp {
+            if loginVM.loginMethod == LoginViewModel.LoginMethod.signUp {
                 SignUpButton()
             } else {
-                SignInButton()}
+                SignInButton()
             }
+        }
         .padding()
     }
 }
