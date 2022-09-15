@@ -1,12 +1,42 @@
 import SwiftUI
+import FirebaseFirestore
+import FirebaseAuth
 
 struct AppView: View {
     @ObservedObject var appVM = AppViewModel()
     @ObservedObject var loginVM = LoginViewModel()
+    @ObservedObject var firebaseSDK = FirebaseSDK()
 
     fileprivate func HomeSection() -> some View {
         VStack {
             Text("Home Screen")
+        }
+    }
+    
+    fileprivate func UserAvatar() -> some View {
+        Image(systemName: "person.crop.circle")
+            .frame(width: 200, height: 200)
+            .clipShape(Circle())
+            .shadow(radius: 10)
+            .overlay(Circle().fill(.yellow))
+            .padding(.top, 50)
+    }
+    
+    fileprivate func BasicDetails() -> some View {
+        VStack {
+            Text("")
+        }
+    }
+    
+    fileprivate func ProfileSection() -> some View {
+        VStack {
+            UserAvatar()
+            Spacer()
+            Text(appVM.loggedInUser.email)
+            Spacer()
+            Button("Sign Out") {
+                loginVM.signOut()
+            }
         }
     }
     
@@ -24,7 +54,8 @@ struct AppView: View {
                     Text("Home")
                 }
                 .tag(AppViewModel.TabViewSelection.home)
-            Text("Profile Screen")
+//            ProfileView()
+            Text(appVM.loggedInUser.email)
                 .tabItem {
                     Image(systemName: "person.crop.circle")
                     Text("Profile")
@@ -33,12 +64,14 @@ struct AppView: View {
         }
         // The onAppear has not been tested yet
         .onAppear {
-            appVM.tabViewSelection = loginVM.currentUser.isNewUser ? AppViewModel.TabViewSelection.profile : AppViewModel.TabViewSelection.home
+            Task {
+                await appVM.fetchUserData()
+            }
         }
     }
 }
 
-struct HomeView_Previews: PreviewProvider {
+struct AppView_Previews: PreviewProvider {
     static var previews: some View {
         AppView()
     }

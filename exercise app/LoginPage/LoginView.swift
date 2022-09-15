@@ -11,14 +11,6 @@ struct LoginView: View {
             .textFieldStyle(.roundedBorder)
     }
     
-    fileprivate func UsernameInput() -> some View {
-        TextField("Username", text: $loginVM.password)
-            .keyboardType(.default)
-            .disableAutocorrection(true)
-            .autocapitalization(.none)
-            .textFieldStyle(.roundedBorder)
-    }
-    
     fileprivate func PasswordInput() -> some View {
         SecureField("Password", text: $loginVM.password)
             .textFieldStyle(.roundedBorder)
@@ -36,7 +28,7 @@ struct LoginView: View {
     fileprivate func SignUpButton() -> some View {
         Button("Sign Up") {
             Task {
-                await loginVM.signIn()
+                await loginVM.signUp()
             }
         }
         .buttonStyle(LoginButton())
@@ -59,21 +51,17 @@ struct LoginView: View {
             .padding(.bottom, 50)
             
             EmailInput()
-            if(loginVM.error == LoginViewModel.LoginError.emptyEmail) {
+            if(loginVM.loginError == LoginViewModel.LoginError.emptyEmail) {
                 ErrorText(errorText: "Email cannot be empty")
-            } else if(loginVM.error == LoginViewModel.LoginError.invalidEmail) {
+            } else if(loginVM.loginError == LoginViewModel.LoginError.invalidEmail) {
                 ErrorText(errorText: "Email is invalid")
             }
             
-            if (loginVM.loginMethod == LoginViewModel.LoginMethod.signUp) {
-                UsernameInput()
-            }
-            
             PasswordInput()
-            if(loginVM.error == LoginViewModel.LoginError.emptyPassword) {
+            if(loginVM.loginError == LoginViewModel.LoginError.emptyPassword) {
                 ErrorText(errorText: "Password cannot be empty")
             }
-            if(loginVM.error == LoginViewModel.LoginError.wrongPassword) {
+            if(loginVM.loginError == LoginViewModel.LoginError.wrongPassword) {
                 ErrorText(errorText: "Password is incorrect")
             }
             

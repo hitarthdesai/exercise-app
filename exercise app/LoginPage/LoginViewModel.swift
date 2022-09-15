@@ -5,15 +5,18 @@ import FirebaseAuth
 
 struct User {
     var uid: String = ""
-    var isNewUser: Bool = false
+    var username: String = ""
+    var email: String = ""
+    var password: String = ""
 }
 
+@MainActor
 class LoginViewModel: ObservableObject {
     private var handler = Auth.auth().addStateDidChangeListener{_,_ in }
     init() {
         handler = Auth.auth().addStateDidChangeListener{ auth, user in
             if let user = user {
-                self._currentUser = User(uid: user.uid, isNewUser: self.loginMethod == .signUp)
+                self._currentUser = User(uid: user.uid)
                 self.loginState = .loggedIn
             } else {
                 self._currentUser = nil
@@ -39,39 +42,36 @@ class LoginViewModel: ObservableObject {
     @Published var loginMethod: LoginMethod = .signIn {
         didSet {
             self.email = ""
-            self.username = ""
             self.password = ""
-            self.error = .noError
+            self.loginError = .noError
         }
     }
     
     @Published var email: String = ""
-    @Published var username: String = ""
     @Published var password: String = ""
     
     enum LoginError {
         case emptyEmail, invalidEmail
-        case emptyUsername
         case emptyPassword
         case noError
         
         // Below given errors have not been handled yet
-        case cannotCreateUserDocument, someError, wrongPassword, usernameAlreadyTaken, emailAlreadyExists
+        case cannotCreateUserDocument, someError, wrongPassword, emailAlreadyExists
     }
-    @Published var error: LoginError = .noError
+    @Published var loginError: LoginError = .noError
     
-    @Published private var _currentUser : User? = nil
+    @Published private var _currentUser: User? = nil
     var currentUser: User {
         return _currentUser ?? User(uid: "")
     }
     
     func signIn() async {
         if(email.count == 0) {
-            self.error = .emptyEmail
+            self.loginError = .emptyEmail
             return
         }
         if(password.count == 0) {
-            self.error = .emptyPassword
+            self.loginError = .emptyPassword
             return
         }
         
@@ -79,43 +79,42 @@ class LoginViewModel: ObservableObject {
             try await Auth.auth().signIn(withEmail: email, password: password)
         } catch let signInError as NSError {
             switch signInError.code {
-            case AuthErrorCode.invalidEmail.rawValue:
-                self.error = .invalidEmail
-                break
-            case AuthErrorCode.wrongPassword.rawValue:
-                self.error = .wrongPassword
-                break
-            default:
-                self.error = .someError
+                case AuthErrorCode.invalidEmail.rawValue:
+                    self.loginError = .invalidEmail
+                    break
+                case AuthErrorCode.wrongPassword.rawValue:
+                    self.loginError = .wrongPassword
+                    break
+                default:
+                    self.loginError = .someError
             }
-            
         }
     }
     
     private func createUserDocument(uid: String) {
         let db = Firestore.firestore()
-        var _: DocumentReference = db.collection("users").addDocument(data: [
-            "userID": uid
-        ]) { error in
+        let userDocumentReference: DocumentReference = db.document("users/\(uid)")
+        userDocumentReference.setData([
+            "username": "",
+            "email": self.email,
+            "password": self.password
+        ]) {
+            error in
             if let _ = error {
-                self.error = .cannotCreateUserDocument
+                self.loginError = .cannotCreateUserDocument
             } else {
-                self.error = .noError
+                self.loginError = .noError
             }
         }
     }
     
     func signUp() async {
         if(email.count == 0) {
-            self.error = .emptyEmail
-            return
-        }
-        if(username.count == 0) {
-            self.error = .emptyUsername
+            self.loginError = .emptyEmail
             return
         }
         if(password.count == 0) {
-            self.error = .emptyPassword
+            self.loginError = .emptyPassword
             return
         }
         
@@ -126,22 +125,23 @@ class LoginViewModel: ObservableObject {
         } catch let signUpError as NSError {
             switch signUpError.code {
             case AuthErrorCode.invalidEmail.rawValue:
-                self.error = .invalidEmail
+                self.loginError = .invalidEmail
                 break
             case AuthErrorCode.wrongPassword.rawValue:
-                self.error = .wrongPassword
+                self.loginError = .wrongPassword
                 break
             default:
-                self.error = .someError
+                self.loginError = .someError
             }
             
         }
     }
        
-    func signOut() async {
+    func signOut() {
         do {
             try Auth.auth().signOut()
         } catch {
+            //Handling errors is left
         }
     }
 }
