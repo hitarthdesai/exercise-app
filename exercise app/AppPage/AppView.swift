@@ -6,37 +6,29 @@ struct AppView: View {
     @ObservedObject var appVM = AppViewModel()
     @ObservedObject var loginVM = LoginViewModel()
     @ObservedObject var firebaseSDK = FirebaseSDK()
-
-    fileprivate func HomeSection() -> some View {
-        VStack {
-            Text("Home Screen")
-        }
-    }
-    
-    fileprivate func UserAvatar() -> some View {
-        Image(systemName: "person.crop.circle")
-            .frame(width: 200, height: 200)
-            .clipShape(Circle())
-            .shadow(radius: 10)
-            .overlay(Circle().fill(.yellow))
-            .padding(.top, 50)
-    }
-    
-    fileprivate func BasicDetails() -> some View {
-        VStack {
-            Text("")
-        }
-    }
     
     fileprivate func ProfileSection() -> some View {
         VStack {
-            UserAvatar()
+            Image(systemName: "person.crop.circle")
+                .frame(width: 200, height: 200)
+                .clipShape(Circle())
+                .shadow(radius: 10)
+                .overlay(Circle().fill(.yellow))
+                .padding(.top, 50)
+            Text(appVM.loggedInUser.username)
+                .font(.title2)
             Spacer()
-            Text(appVM.loggedInUser.email)
-            Spacer()
-            Button("Sign Out") {
-                loginVM.signOut()
+            HStack {
+                Button("Sign Out") {
+                    loginVM.signOut()
+                }
+                .buttonStyle(.bordered)
+                Button("Edit Profile") {
+                    appVM.isEditingProfile = true
+                }
+                .buttonStyle(.bordered)
             }
+            .frame(maxWidth: .infinity)
         }
     }
     
@@ -55,7 +47,7 @@ struct AppView: View {
                 }
                 .tag(AppViewModel.TabViewSelection.home)
 //            ProfileView()
-            Text(appVM.loggedInUser.email)
+            ProfileSection()
                 .tabItem {
                     Image(systemName: "person.crop.circle")
                     Text("Profile")

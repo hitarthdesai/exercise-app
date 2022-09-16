@@ -8,6 +8,7 @@ class AppViewModel: ObservableObject {
         case explore, home, profile
     }
     @Published var tabViewSelection: TabViewSelection = .home
+    @Published var isEditingProfile: Bool = false
     
     enum AppError {
         // Below given errors have not been handled yet

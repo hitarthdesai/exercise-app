@@ -5,7 +5,7 @@ import FirebaseAuth
 
 struct User {
     var uid: String = ""
-    var username: String = ""
+    var username: String = "bruh"
     var email: String = ""
     var password: String = ""
 }
