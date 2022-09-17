@@ -9,6 +9,7 @@ class AppViewModel: ObservableObject {
     }
     @Published var tabViewSelection: TabViewSelection = .home
     @Published var isEditingProfile: Bool = false
+    @Published var isAddingNewWorkout: Bool = false
     
     enum AppError {
         // Below given errors have not been handled yet

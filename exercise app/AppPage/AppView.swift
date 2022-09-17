@@ -32,28 +32,43 @@ struct AppView: View {
         }
     }
     
-    var body: some View {
-        TabView(selection: $appVM.tabViewSelection) {
-            Text("Explore Screen")
-                .tabItem {
-                    Image(systemName: "magnifyingglass")
-                    Text("Explore")
+    fileprivate func AppViewSection() -> some View {
+        VStack {
+            if appVM.isAddingNewWorkout {
+                AddNewWorkoutView()
+            } else {
+                VStack {
+                    TabView(selection: $appVM.tabViewSelection) {
+                        Text("Explore Screen")
+                            .tabItem {
+                                Image(systemName: "magnifyingglass")
+                                Text("Explore")
+                            }
+                            .tag(AppViewModel.TabViewSelection.explore)
+                        HomeSection()
+                            .tabItem {
+                                Image(systemName: "house.fill")
+                                Text("Home")
+                            }
+                            .tag(AppViewModel.TabViewSelection.home)
+                        //            ProfileView()
+                        ProfileSection()
+                            .tabItem {
+                                Image(systemName: "person.crop.circle")
+                                Text("Profile")
+                            }
+                            .tag(AppViewModel.TabViewSelection.profile)
+                    }
+                    Button("Add New Workout") {
+                        appVM.isAddingNewWorkout = true
+                    }
                 }
-                .tag(AppViewModel.TabViewSelection.explore)
-            HomeSection()
-                .tabItem {
-                    Image(systemName: "house.fill")
-                    Text("Home")
-                }
-                .tag(AppViewModel.TabViewSelection.home)
-//            ProfileView()
-            ProfileSection()
-                .tabItem {
-                    Image(systemName: "person.crop.circle")
-                    Text("Profile")
-                }
-                .tag(AppViewModel.TabViewSelection.profile)
+            }
         }
+    }
+    
+    var body: some View {
+        AppViewSection()
         // The onAppear has not been tested yet
         .onAppear {
             Task {

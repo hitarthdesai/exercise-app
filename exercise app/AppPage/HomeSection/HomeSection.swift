@@ -1,43 +1,5 @@
 import SwiftUI
 
-struct WorkoutLinkView: View {
-    var workout: Workout
-    
-    var body: some View {
-        VStack {
-            Text(workout.name)
-                .font(.title3)
-            Text("\(workout.exercises.count) Exercises")
-                .font(.caption)
-        }
-    }
-}
-
-struct WorkoutView: View {
-    var workout: Workout
-    
-    var body: some View {
-        VStack {
-            List(workout.exercises) { exercise in
-                ExerciseView(exercise: exercise)
-            }
-            Spacer()
-        }
-        .navigationTitle(workout.name)
-    }
-}
-
-struct ExerciseView: View {
-    var exercise: Exercise
-    
-    var body: some View {
-        VStack {
-            Text(exercise.name)
-                .font(.title3)
-        }
-    }
-}
-
 struct HomeSection: View {
     var Workouts: [Workout]
     init() {
