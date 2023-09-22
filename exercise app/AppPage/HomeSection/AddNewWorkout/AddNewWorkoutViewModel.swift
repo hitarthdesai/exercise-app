@@ -4,6 +4,8 @@ import FirebaseAuth
 
 @MainActor
 class AddNewWorkoutViewModel: ObservableObject {
+    
+    
     @Published var isWorkoutNameSet: Bool = false
     @Published var workoutName: String = "" {
         didSet {
@@ -55,6 +57,12 @@ class AddNewWorkoutViewModel: ObservableObject {
             }
         }
     }
+    
+    @Published var workoutItemToAdd : WorkoutItem = WorkoutItem(exercise: exercise_app.Exercise(id: UUID(), name: ""), sets: [ExerciseSet(id: UUID(), numberOfUnits: -1)])
+    @Published var isAddingExercise: Bool = false
+    @Published var hasSelectedExercise: Bool = false
+    @Published var isAddingSet: Bool = false
+    @Published var numberOfUnits: Int = 0
 
     @Published var addedExercises: [Exercise] = []
 }

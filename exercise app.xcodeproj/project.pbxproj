@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		142E822028D3EC270049B53E /* HomeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 142E821F28D3EC270049B53E /* HomeSection.swift */; };
+		144C93EB28D68D76007D299C /* AddNewExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 144C93EA28D68D76007D299C /* AddNewExerciseView.swift */; };
 		1472386F28CCE67700853EE3 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 1472386E28CCE67700853EE3 /* FirebaseAuth */; };
 		1472387128CCE67700853EE3 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 1472387028CCE67700853EE3 /* FirebaseFirestore */; };
 		1472387328CCE67700853EE3 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 1472387228CCE67700853EE3 /* FirebaseFunctions */; };
@@ -63,6 +64,7 @@
 
 /* Begin PBXFileReference section */
 		142E821F28D3EC270049B53E /* HomeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSection.swift; sourceTree = "<group>"; };
+		144C93EA28D68D76007D299C /* AddNewExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewExerciseView.swift; sourceTree = "<group>"; };
 		1472387828CD279200853EE3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1480CDD028C8BA8700CFA8D8 /* exercise app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "exercise app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1480CDD328C8BA8700CFA8D8 /* exercise_appApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = exercise_appApp.swift; sourceTree = "<group>"; };
@@ -191,6 +193,7 @@
 			isa = PBXGroup;
 			children = (
 				14BC1B1D28D5187300FC2FAC /* AddNewWorkoutView.swift */,
+				144C93EA28D68D76007D299C /* AddNewExerciseView.swift */,
 				14BC1B2028D541BA00FC2FAC /* AddNewWorkoutViewModel.swift */,
 			);
 			path = AddNewWorkout;
@@ -365,6 +368,7 @@
 				14D0FFE028D2A816008C833C /* AppViewModel.swift in Sources */,
 				14959F1F28D23C2D00E27A77 /* LoginViewModel.swift in Sources */,
 				14D0FFD828D29CAE008C833C /* DefaultView.swift in Sources */,
+				144C93EB28D68D76007D299C /* AddNewExerciseView.swift in Sources */,
 				142E822028D3EC270049B53E /* HomeSection.swift in Sources */,
 				1480CDD628C8BA8700CFA8D8 /* LoginView.swift in Sources */,
 				14E201C028D2905D00E12374 /* AppView.swift in Sources */,
